@@ -1,1 +1,1 @@
-xstate demonstration in REACT 
+xstate demonstration in REACT using videoPlayer Controls 
