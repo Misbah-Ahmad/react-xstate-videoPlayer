@@ -8,12 +8,12 @@ const Video = ({ send, current }) => {
   return (
     <video
       ref={ref}
-      onCanPlay={() => {
-        send(machineEvents.LOADED, { video: ref.current });
-      }}
-      onError={() => {
-        send(machineEvents.FAILED);
-      }}
+      onCanPlay={() => send(machineEvents.LOADED, { video: ref.current })}
+      onPlay={() => send(machineEvents.PLAY)}
+      onPause={() => send(machineEvents.PAUSE)}
+      onError={() => send(machineEvents.FAILED)}
+      onTimeUpdate={() => send(machineEvents.TIMING)}
+      onEnded={() => {send(machineEvents.END); console.log("ENDED");}}
       controls
     >
       <source src="/video.mp4" type="video/mp4" />

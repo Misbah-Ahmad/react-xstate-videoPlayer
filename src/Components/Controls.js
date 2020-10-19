@@ -16,10 +16,11 @@ export const PlayButton = ({ current, send }) => {
   );
 };
 
-export const VideoTimeCounter = () => {
+export const VideoTimeCounter = ({ elapsed, duration }) => {
   return (
     <span className="timer">
-      00:00 / 00:00
+      {parseInt(elapsed / 60)}:{parseInt(elapsed % 60)} /{" "}
+      {parseInt(duration / 60)}:{parseInt(duration % 60)}
     </span>
   );
 };

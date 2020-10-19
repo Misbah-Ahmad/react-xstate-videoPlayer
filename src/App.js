@@ -9,12 +9,14 @@ import { videoMachine } from "./Machines/VideoMachine";
 function App() {
   const [current, send] = useMachine(videoMachine);
 
+  const { elapsed, duration } = current.context;
+
   return (
     <div className="container">
       <Video send={send} current={current} />
       <div>
         <PlayButton current={current} send={send} />
-        <VideoTimeCounter />
+        <VideoTimeCounter elapsed={elapsed} duration={duration} />
       </div>
     </div>
   );

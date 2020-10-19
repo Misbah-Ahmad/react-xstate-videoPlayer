@@ -24,6 +24,13 @@ export const videoMachine = new Machine(
       },
       ready: {
         initial: "paused",
+        on: {
+          TIMING: {
+            actions: assign({
+              elapsed: (context, _event) => context.video.currentTime,
+            }),
+          },          
+        },
         states: {
           paused: {
             on: {
@@ -31,13 +38,13 @@ export const videoMachine = new Machine(
                 target: "playing",
                 actions: ["playVideo"],
               },
-            },
+            }
           },
           playing: {
             on: {
               PAUSE: {
                 target: "paused",
-                actions: ["pauseVideo"]
+                actions: ["pauseVideo"],
               },
               END: "ended",
             },
@@ -46,6 +53,10 @@ export const videoMachine = new Machine(
             on: {
               PLAY: {
                 target: "playing",
+                actions: [
+                  assign({ elapsed: 0 }),
+                  "playVideo"
+                ],
               },
             },
           },
@@ -59,7 +70,7 @@ export const videoMachine = new Machine(
   {
     actions: {
       playVideo: (context, _event) => context.video.play(),
-      pauseVideo: (context, _event) => context.video.pause()
+      pauseVideo: (context, _event) => context.video.pause(),
     },
   }
 );
@@ -69,5 +80,6 @@ export const machineEvents = {
   FAILED: "FAILED",
   PLAY: "PLAY",
   PAUSE: "PAUSE",
+  TIMING: "TIMING",
   END: "END",
 };
