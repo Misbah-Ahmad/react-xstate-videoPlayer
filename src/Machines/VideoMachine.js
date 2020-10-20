@@ -32,7 +32,7 @@ export const videoMachine = new Machine(
               TIMING: [
                 {
                   actions: ["updateElapsedTime"],
-                }
+                },
               ],
               FORWARD: {
                 actions: ["forwardVideo"],
