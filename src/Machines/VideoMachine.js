@@ -8,12 +8,13 @@ export const videoMachine = new Machine(
       video: null,
       duration: 0,
       elapsed: 0,
+      isMute: false,
     },
     states: {
       loading: {
         on: {
           LOADED: {
-            target: "ready",
+            target: "success",
             actions: assign({
               video: (_context, event) => event.video,
               duration: (_context, event) => event.video.duration,
@@ -22,41 +23,77 @@ export const videoMachine = new Machine(
           FAILED: "failure",
         },
       },
-      ready: {
-        initial: "paused",
-        on: {
-          TIMING: {
-            actions: assign({
-              elapsed: (context, _event) => context.video.currentTime,
-            }),
-          },          
-        },
+      success: {
+        type: "parallel",
         states: {
-          paused: {
+          ready: {
+            initial: "paused",
             on: {
-              PLAY: {
-                target: "playing",
-                actions: ["playVideo"],
+              TIMING: {
+                actions: assign({
+                  elapsed: (context, _event) => context.video.currentTime,
+                }),
               },
-            }
-          },
-          playing: {
-            on: {
-              PAUSE: {
-                target: "paused",
-                actions: ["pauseVideo"],
+            },
+            states: {
+              paused: {
+                on: {
+                  PLAY: {
+                    target: "playing",
+                    actions: ["playVideo"],
+                  },
+                },
               },
-              END: "ended",
+              playing: {
+                on: {
+                  PAUSE: {
+                    target: "paused",
+                    actions: ["pauseVideo"],
+                  },
+                  END: "ended",
+                },
+              },
+              ended: {
+                on: {
+                  PLAY: {
+                    target: "playing",
+                    actions: [assign({ elapsed: 0 }), "playVideo"],
+                  },
+                },
+              },
             },
           },
-          ended: {
-            on: {
-              PLAY: {
-                target: "playing",
-                actions: [
-                  assign({ elapsed: 0 }),
-                  "playVideo"
-                ],
+          mic: {
+            id: "micState",
+            initial: "unmuted",
+            states: {
+              unmuted: {
+                on: {
+                  MUTE: {
+                    target: "muted",
+                    cond: "checkIsUnmuted",
+                    actions: [
+                      "muteVideo",
+                      assign({
+                        isMute: true,
+                      }),
+                    ],
+                  },
+                },
+              },
+              muted: {
+                on: {
+                  UNMUTE: {
+                    target: "unmuted",
+                    cond: "checkIsMuted",
+                    actions: [
+                      "unmuteVideo",
+                      assign({
+                        isMute: false,
+                      }),
+                    ],
+                  },
+                },
               },
             },
           },
@@ -71,6 +108,12 @@ export const videoMachine = new Machine(
     actions: {
       playVideo: (context, _event) => context.video.play(),
       pauseVideo: (context, _event) => context.video.pause(),
+      muteVideo: (context, _event) => (context.video.muted = true),
+      unmuteVideo: (context, _event) => (context.video.muted = false),
+    },
+    guards: {
+      checkIsMuted: (context, _event) => context.video.muted === true,
+      checkIsUnmuted: (context, _event) => context.video.muted === false,
     },
   }
 );
@@ -82,4 +125,6 @@ export const machineEvents = {
   PAUSE: "PAUSE",
   TIMING: "TIMING",
   END: "END",
+  MUTE: "MUTE",
+  UNMUTE: "UNMUTE",
 };

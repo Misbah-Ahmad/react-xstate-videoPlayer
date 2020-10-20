@@ -2,14 +2,14 @@ import React from "react";
 import "./reset.css";
 import "./App.css";
 import Video from "./Components/Video";
-import { PlayButton, VideoTimeCounter } from "./Components/Controls";
+import { MuteButton, PlayButton, VideoTimeCounter } from "./Components/Controls";
 import { useMachine } from "@xstate/react";
 import { videoMachine } from "./Machines/VideoMachine";
 
 function App() {
   const [current, send] = useMachine(videoMachine);
 
-  const { elapsed, duration } = current.context;
+  const { elapsed, duration, isMute } = current.context;
 
   return (
     <div className="container">
@@ -17,6 +17,7 @@ function App() {
       <div>
         <PlayButton current={current} send={send} />
         <VideoTimeCounter elapsed={elapsed} duration={duration} />
+        <MuteButton isMute={isMute} send={send}/>
       </div>
     </div>
   );
