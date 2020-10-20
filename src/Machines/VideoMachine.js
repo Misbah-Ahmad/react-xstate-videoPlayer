@@ -124,7 +124,7 @@ export const videoMachine = new Machine(
           context.elapsed + Math.min(context.duration - context.elapsed, 5)),
       backwardVideo: (context, _event) =>
         (context.video.currentTime =
-          context.elapsed - Math.max(context.elapsed, 5)),
+          context.elapsed - Math.min(context.elapsed, 5)),
     },
     guards: {
       checkIsMuted: (context, _event) => context.video.muted === true,
