@@ -29,10 +29,16 @@ export const videoMachine = new Machine(
           ready: {
             initial: "paused",
             on: {
-              TIMING: {
-                actions: assign({
-                  elapsed: (context, _event) => context.video.currentTime,
-                }),
+              TIMING: [
+                {
+                  actions: ["updateElapsedTime"],
+                }
+              ],
+              FORWARD: {
+                actions: ["forwardVideo"],
+              },
+              BACKWARD: {
+                actions: ["backwardVideo"],
               },
             },
             states: {
@@ -110,6 +116,15 @@ export const videoMachine = new Machine(
       pauseVideo: (context, _event) => context.video.pause(),
       muteVideo: (context, _event) => (context.video.muted = true),
       unmuteVideo: (context, _event) => (context.video.muted = false),
+      updateElapsedTime: assign({
+        elapsed: (context, _event) => context.video.currentTime,
+      }),
+      forwardVideo: (context, _event) =>
+        (context.video.currentTime =
+          context.elapsed + Math.min(context.duration - context.elapsed, 5)),
+      backwardVideo: (context, _event) =>
+        (context.video.currentTime =
+          context.elapsed - Math.max(context.elapsed, 5)),
     },
     guards: {
       checkIsMuted: (context, _event) => context.video.muted === true,
@@ -127,4 +142,6 @@ export const machineEvents = {
   END: "END",
   MUTE: "MUTE",
   UNMUTE: "UNMUTE",
+  FORWARD: "FORWARD",
+  BACKWARD: "BACKWARD",
 };

@@ -33,3 +33,7 @@ button {
   display: inline-block;
   margin-left: 5px;
 }
+
+.m-2 {
+  margin: 2px;
+}

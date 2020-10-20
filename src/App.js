@@ -2,7 +2,7 @@ import React from "react";
 import "./reset.css";
 import "./App.css";
 import Video from "./Components/Video";
-import { MuteButton, PlayButton, VideoTimeCounter } from "./Components/Controls";
+import { BackwardButton, ForwardButton, MuteButton, PlayButton, VideoTimeCounter } from "./Components/Controls";
 import { useMachine } from "@xstate/react";
 import { videoMachine } from "./Machines/VideoMachine";
 
@@ -18,6 +18,8 @@ function App() {
         <PlayButton current={current} send={send} />
         <VideoTimeCounter elapsed={elapsed} duration={duration} />
         <MuteButton isMute={isMute} send={send}/>
+        <BackwardButton send={send}/>
+        <ForwardButton send={send}/>
       </div>
     </div>
   );
